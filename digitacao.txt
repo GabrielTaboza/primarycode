@@ -1,0 +1,10 @@
+Teclado
+10
+50.0
+Eletrônicos
+5
+Mouse
+2
+100.0
+Eletrônicos
+1
