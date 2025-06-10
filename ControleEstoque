@@ -1,0 +1,144 @@
+import java.util.Scanner;
+
+public class ControleEstoque {
+  public static final int TAM = 100;
+  public static Produto[] produtos = new Produto[TAM];
+  public static int totalProdutos = 0;
+  public static Scanner input = new Scanner(System.in);
+
+  public static void main(String[] args) {
+    int opcao;
+
+    do {
+      System.out.println("\nMenu:");
+      System.out.println("1 - Cadastrar produto");
+      System.out.println("2 - Listar produtos");
+      System.out.println("3 - Filtrar por categoria");
+      System.out.println("4 - Ordenar por nome");
+      System.out.println("5 - Remover produto");
+      System.out.println("6 - Atualizar preço");
+      System.out.println("7 - Subtotal por categoria");
+      System.out.println("0 - Sair");
+      System.out.print("Escolha uma opção: ");
+      opcao = input.nextInt();
+      input.nextLine(); // limpar quebra de linha
+
+      switch(opcao) {
+        case 1: cadastrarProduto(); break;
+        case 2: listarProdutos(); break;
+        case 3: filtrarPorCategoria(); break;
+        case 4: ordenarPorNome(); break;
+        case 5: removerProduto(); break;
+        case 6: atualizarPreco(); break;
+        case 7: subtotalPorCategoria(); break;
+        case 0: System.out.println("Encerrando programa..."); break;
+        default: System.out.println("Opção inválida!");
+      }
+    } while(opcao != 0);
+  }
+
+  public static void cadastrarProduto() {
+    if (totalProdutos < TAM) {
+      Produto p = new Produto();
+      System.out.print("Nome: ");
+      p.nome = input.nextLine();
+      System.out.print("Descrição: ");
+      p.descricao = input.nextLine();
+      System.out.print("Estoque: ");
+      p.qtdEstoque = input.nextInt();
+      System.out.print("Preço unitário: ");
+      p.precoUnitario = input.nextDouble();
+      input.nextLine();
+      System.out.print("Categoria: ");
+      p.categoria = input.nextLine();
+      System.out.print("Qtd mínima: ");
+      p.qtdMinima = input.nextInt();
+      input.nextLine();
+
+      produtos[totalProdutos] = p;
+      totalProdutos++;
+      System.out.println("Produto cadastrado com sucesso!");
+    } else {
+      System.out.println("Limite de produtos atingido!");
+    }
+  }
+
+  public static void listarProdutos() {
+    for (int i = 0; i < totalProdutos; i++) {
+      Produto p = produtos[i];
+      System.out.printf("%d - %s (%s), Estoque: %d, Preço: R$ %.2f, Categoria: %s, Mínimo: %d\n",
+        i, p.nome, p.descricao, p.qtdEstoque, p.precoUnitario, p.categoria, p.qtdMinima);
+    }
+  }
+
+  public static void filtrarPorCategoria() {
+    System.out.print("Digite a categoria: ");
+    String cat = input.nextLine();
+    boolean achou = false;
+    for (int i = 0; i < totalProdutos; i++) {
+      if (produtos[i].categoria.equalsIgnoreCase(cat)) {
+        Produto p = produtos[i];
+        System.out.printf("%s - Estoque: %d, Preço: R$ %.2f\n", p.nome, p.qtdEstoque, p.precoUnitario);
+        achou = true;
+      }
+    }
+    if (!achou) System.out.println("Nenhum produto encontrado nessa categoria.");
+  }
+
+  public static void ordenarPorNome() {
+    for (int i = 0; i < totalProdutos - 1; i++) {
+      for (int j = i + 1; j < totalProdutos; j++) {
+        if (produtos[i].nome.compareToIgnoreCase(produtos[j].nome) > 0) {
+          Produto temp = produtos[i];
+          produtos[i] = produtos[j];
+          produtos[j] = temp;
+        }
+      }
+    }
+    System.out.println("Produtos ordenados por nome.");
+  }
+
+  public static void removerProduto() {
+    listarProdutos();
+    System.out.print("Digite o índice do produto para remover: ");
+    int idx = input.nextInt();
+    input.nextLine();
+    if (idx >= 0 && idx < totalProdutos) {
+      for (int i = idx; i < totalProdutos - 1; i++) {
+        produtos[i] = produtos[i + 1];
+      }
+      totalProdutos--;
+      System.out.println("Produto removido.");
+    } else {
+      System.out.println("Índice inválido.");
+    }
+  }
+
+  public static void atualizarPreco() {
+    listarProdutos();
+    System.out.print("Digite o índice do produto para atualizar preço: ");
+    int idx = input.nextInt();
+    input.nextLine();
+    if (idx >= 0 && idx < totalProdutos) {
+      System.out.print("Novo preço: ");
+      produtos[idx].precoUnitario = input.nextDouble();
+      input.nextLine();
+      System.out.println("Preço atualizado.");
+    } else {
+      System.out.println("Índice inválido.");
+    }
+  }
+
+  public static void subtotalPorCategoria() {
+    double subtotal;
+    System.out.print("Digite a categoria para subtotal: ");
+    String cat = input.nextLine();
+    subtotal = 0;
+    for (int i = 0; i < totalProdutos; i++) {
+      if (produtos[i].categoria.equalsIgnoreCase(cat)) {
+        subtotal += produtos[i].qtdEstoque * produtos[i].precoUnitario;
+      }
+    }
+    System.out.printf("Subtotal da categoria '%s': R$ %.2f\n", cat, subtotal);
+  }
+}
