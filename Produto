@@ -1,0 +1,8 @@
+public class Produto {
+  String nome;
+  String descricao;
+  int qtdEstoque;
+  double precoUnitario;
+  String categoria;
+  int qtdMinima;
+}
